@@ -22,26 +22,29 @@ template <typename T> class LinkedList {
     }
     void push_back(T value) {
         Node<T>* newNode = new Node<T>(value);
-        this->tail->next = newNode;
+        if (this->tail) {
+            this->tail->next = newNode;
+        } else {
+            this->head = newNode;
+        }
         this->tail = newNode;
     }
 
     void traverse(void (*action)(T)) {
         Node<T>* current = this->head;
-        while(current) {
+        while (current) {
             if (action) {
                 action(current->data);
             }
             current = current->next;
         }
-
     }
 
     ~LinkedList() {
         Node<T>* current = head;
         Node<T>* nextNode = nullptr;
 
-        while(current) {
+        while (current) {
             nextNode = current->next;
             delete current;
             current = nextNode;
