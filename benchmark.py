@@ -16,26 +16,28 @@ def clean_data():
     with open('data.csv', 'w') as datafile:
         datafile.write("TestName,Language,Size,Duration\n")
 
-def build_apps():
-    subprocess.run([
-        'g++',
-        './c++/memory/linked_list.cpp',
-        '-o', './c++/memory/linked_list',
-        '-O3'
-    ], capture_output=True)
+def build_apps(config):
+    if config['compile'] == True:
+        capture_output = not config['show_outputs']
+        for dir in ['memory', 'threading']:
+            subprocess.run([
+                'g++',
+                f'./c++/{dir}/main.cpp',
+                '-o', f'./c++/{dir}/main',
+                '-O3'
+            ], capture_output=capture_output)
 
-    subprocess.run([
-        'zig', 'build-exe', '-lc'
-        './zig/memory/linked_list.zig',
-        '-o', './zig/memory/linked_list',
-        '-O', 'ReleaseFast'
-    ], capture_output=True)
+            subprocess.run([
+                'zig', 'build-exe', '-lc', 
+                './main.zig',
+                '-O', 'ReleaseFast'
+            ], capture_output=capture_output, cwd=f'./zig/{dir}/')
 
-    subprocess.run([
-        'cargo', 
-        'build',
-        '--release'
-    ], capture_output=True, cwd='rust/memory/dynamic')
+        subprocess.run([
+            'cargo', 
+            'build',
+            '--release'
+        ], capture_output=capture_output, cwd='rust/memory/dynamic')
 
 def memory_tests(config):
     min = config['min']
@@ -43,6 +45,8 @@ def memory_tests(config):
     length = config['array_size']
     testcase_dest = config['testcase_dest']
     random_array = [random.randint(min, max) for _ in range (length)]
+    capture_output = not config['show_outputs']
+
     
     with open(testcase_dest, "w") as testcase_file:
         testcase_file.write(
@@ -52,31 +56,44 @@ def memory_tests(config):
                 .replace(', ', ' ')
         )
 
-
     subprocess.run([
-        './c++/memory/linked_list',
+        './c++/memory/main',
         testcase_dest,
         'data.csv',
         str(length)
-    ], capture_output=True)
+    ], capture_output=capture_output)
 
-    subprocess.run([
-        './zig/memory/linked_list',
-        testcase_dest,
-        'data.csv',
-        str(length)
-    ], capture_output=True)
+    for allocator in ['c_allocator', 'general_purpose_allocator', 'page_allocator']:
+        subprocess.run([
+            './zig/memory/main',
+            testcase_dest,
+            'data.csv',
+            str(length),
+            allocator
+        ], capture_output=capture_output)
 
     subprocess.run([
         './rust/memory/dynamic/target/release/dynamic',
         testcase_dest,
         'data.csv',
         str(length)
-    ], capture_output=True)
+    ], capture_output=capture_output)
         
 
 def threading_tests(config):
-    pass
+
+    runs = str(config["thread_launches"])
+    subprocess.run([
+        './c++/threading/main',
+        runs,
+        'data.csv',
+    ], capture_output=True)
+
+    subprocess.run([
+        './zig/threading/main',
+        runs,
+        'data.csv',
+    ], capture_output=True)
 
 def parse_data(config):
     df = pd.read_csv("data.csv")
@@ -91,7 +108,7 @@ def parse_data(config):
         plt.bar(group['Language'], group['Duration'])
         plt.title(f'Duration for {test_name}')
         plt.xlabel('Language')
-        plt.ylabel('Duration')
+        plt.ylabel('Duration (ns)')
         
         if config['save']:
             plt.savefig(f'charts/{timestamp}/{test_name}_chart.png')
@@ -102,17 +119,15 @@ def parse_data(config):
 def main(config):
     global timestamp
     timestamp = int(time.time())
-    if config['compile'] == True:
-        build_apps()
+    build_apps(config['compilation'])
     
-    if config['clean']:
+    if config['benchmark']['clean']:
         clean_data()
     memory_tests(config['memory'])
     threading_tests(config['threading'])
     parse_data(config['charts'])
 
 if __name__ == '__main__':
-    config = {}
     with open('config.json', 'r') as config_file:
         config = json.load(config_file)
     main(config)

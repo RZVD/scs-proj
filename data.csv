@@ -1,10 +1,23 @@
 TestName,Language,Size,Duration
-Dynamic Array creation,C++,100000,3608
-LinkedList creation,C++,100000,2003733
-LinkedList traversal,C++,100000,259191
-Dynamic Array creation,Zig,100000,8684
-LinkedList creation,Zig,100000,2257752
-LinkedList traversal,Zig,100000,226978
-Dynamic Array creation,Rust,100000,377579
-LinkedList creation,Rust,100000,2279044
-LinkedList traversal,Rust,100000,193545
+Dynamic Array creation,C++,100000,4584
+LinkedList creation,C++,100000,1984568
+LinkedList traversal,C++,100000,212858
+Static Memory test,C++,100000,24
+Dynamic Array creation,Zig_c_allocator,100000,9689
+LinkedList creation,Zig_c_allocator,100000,3158191
+LinkedList traversal,Zig_c_allocator,100000,298525
+Static Memory test,Zig,100000,35
+Dynamic Array creation,Zig_general_purpose_allocator,100000,5117
+LinkedList creation,Zig_general_purpose_allocator,100000,3833753
+LinkedList traversal,Zig_general_purpose_allocator,100000,124131
+Static Memory test,Zig,100000,25
+Dynamic Array creation,Zig_page_allocator,100000,2281
+LinkedList creation,Zig_page_allocator,100000,175269511
+LinkedList traversal,Zig_page_allocator,100000,7820863
+Static Memory test,Zig,100000,46
+Dynamic Array creation,Rust,100000,382201
+LinkedList creation,Rust,100000,2172135
+LinkedList traversal,Rust,100000,187281
+Static Memory test,Rust,100000,33
+ThreadCreation,C++,100000,15406
+ThreadCreation,Zig,100000,15038

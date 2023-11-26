@@ -3,16 +3,26 @@
         "array_size" : 100000,
         "min" : 0,
         "max" : 123546243,
-        "testcase_dest" : "./mem_testcase"
+        "testcase_dest" : "./mem_testcase",
+        "show_outputs" : false
     },
     "threading" : {
-        "thread_launches" : 100000
+        "thread_launches" : 100000,
+        "pipe_reads" : 100000,
+        "show_outputs" : false
     },
-    "compile" : true,
-    "clean" : true,
+
+    "benchmark" :{
+        "clean" : true,
+        "show_outputs" : false
+    },
+    "compilation" : {
+        "compile" : true,
+        "show_outputs" : false
+    },
     "charts" : {
         "save" : true,
         "show" : true,
-        "figsize" : [10, 6]
+        "figsize" : [15, 6]
     }
 }

@@ -100,12 +100,10 @@ fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -
     let mut testfile = File::open(testfile_path)?;
     let mut file_string = String::new();
     testfile.read_to_string(&mut file_string)?;
-    let mut array :Vec<i32> = Vec::with_capacity(array_size);
+    let mut array: Vec<i32> = Vec::with_capacity(array_size);
     let duration = start.elapsed();
 
-
-
-   for s in file_string.split_whitespace() {
+    for s in file_string.split_whitespace() {
         if let Ok(num) = s.parse::<i32>() {
             array.push(num);
         }
@@ -116,7 +114,7 @@ fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -
         .map(|s| s.parse().unwrap())
         .collect::<Vec<_>>();
 
-    println!("{:?}", duration.as_nanos());
+    println!("{}", duration.as_nanos());
 
     let mut datafile = OpenOptions::new()
         .write(true)
@@ -137,14 +135,14 @@ fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -
     }
     let duration = start.elapsed();
     println!("Time to create linked list: {:?}", duration);
-    
+
     writeln!(
         datafile,
         "LinkedList creation,Rust,{},{}",
         array_size,
         duration.as_nanos()
     )?;
-    
+
     let start = Instant::now();
     ll.traverse();
     let duration = start.elapsed();
@@ -152,6 +150,20 @@ fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -
         datafile,
         "LinkedList traversal,Rust,{},{}",
         array_size,
+        duration.as_nanos()
+    )?;
+
+    let mut static_array: [i32; 100000] = [0; 100000];
+    let start = Instant::now();
+    for (idx, el) in static_array.iter_mut().enumerate() {
+        *el = idx as i32 + 1;
+    }
+    let duration = start.elapsed();
+
+    writeln!(
+        datafile,
+        "Static Memory test,Rust,{},{}",
+        100000,
         duration.as_nanos()
     )?;
     Ok(())
