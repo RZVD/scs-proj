@@ -1,0 +1,14 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{}%
+\contentsline {subsection}{\numberline {1.1}Context}{3}{}%
+\contentsline {subsection}{\numberline {1.2}Language selection}{3}{}%
+\contentsline {subsection}{\numberline {1.3}Objectives}{3}{}%
+\contentsline {subsection}{\numberline {1.4}Hypothesis}{3}{}%
+\contentsline {section}{\numberline {2}Bibliographic Study}{4}{}%
+\contentsline {subsection}{\numberline {2.1}Introduction to the languages}{4}{}%
+\contentsline {subsection}{\numberline {2.2}Visualization tools}{4}{}%
+\contentsline {section}{\numberline {3}Analysis \& Design}{5}{}%
+\contentsline {subsection}{\numberline {3.1}Memory benchmarks}{5}{}%
+\contentsline {subsection}{\numberline {3.2}Threading benchmarks}{5}{}%
+\contentsline {section}{\numberline {4}Implementation}{7}{}%
+\contentsline {subsection}{\numberline {4.1}Memory tests, dynamic data}{7}{}%
+\contentsline {section}{\numberline {5}Bibliography}{8}{}%

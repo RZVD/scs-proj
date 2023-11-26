@@ -1,0 +1,10 @@
+TestName,Language,Size,Duration
+Dynamic Array creation,C++,100000,3608
+LinkedList creation,C++,100000,2003733
+LinkedList traversal,C++,100000,259191
+Dynamic Array creation,Zig,100000,8684
+LinkedList creation,Zig,100000,2257752
+LinkedList traversal,Zig,100000,226978
+Dynamic Array creation,Rust,100000,377579
+LinkedList creation,Rust,100000,2279044
+LinkedList traversal,Rust,100000,193545

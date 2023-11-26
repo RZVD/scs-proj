@@ -1,0 +1,18 @@
+{
+    "memory" : {
+        "array_size" : 100000,
+        "min" : 0,
+        "max" : 123546243,
+        "testcase_dest" : "./mem_testcase"
+    },
+    "threading" : {
+        "thread_launches" : 100000
+    },
+    "compile" : true,
+    "clean" : true,
+    "charts" : {
+        "save" : true,
+        "show" : true,
+        "figsize" : [10, 6]
+    }
+}
