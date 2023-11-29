@@ -11,13 +11,6 @@ pub fn LinkedList(comptime T: type) type {
             next: ?*Node = null,
         };
 
-        fn nodeConstructor(value: T, next: ?*Node, allocator: std.mem.Allocator) !?*Node {
-            const newNode = try allocator.create(Node);
-            newNode.data = value;
-            newNode.next = next;
-            return newNode;
-        }
-
         pub fn destroy(self: *Self, allocator: std.mem.Allocator) void {
             var current = self.head;
             var nextNode: ?*Node = null;
@@ -31,7 +24,12 @@ pub fn LinkedList(comptime T: type) type {
         }
 
         pub fn push_back(self: *Self, value: T, allocator: std.mem.Allocator) !void {
-            const newNode = try nodeConstructor(value, null, allocator);
+            const newNode = try allocator.create(Node);
+            newNode.* = .{
+                .data = value,
+                .next = null,
+            };
+
             if (self.tail != null) {
                 self.tail.?.next = newNode;
             } else {
@@ -41,7 +39,12 @@ pub fn LinkedList(comptime T: type) type {
         }
 
         pub fn push_front(self: *Self, value: T, allocator: std.mem.Allocator) !void {
-            const newNode = try nodeConstructor(value, self.head, allocator);
+            const newNode = try allocator.create(Node);
+            newNode.* = .{
+                .data = value,
+                .next = self.head,
+            };
+
             if (self.head == null) {
                 self.tail = newNode;
             }
@@ -92,10 +95,8 @@ pub fn parseTestFile(testfilePath: []const u8, datafilePath: []const u8, arraySi
     defer results_file.close();
 
     var timer = try std.time.Timer.start();
-    var start = try std.time.Instant.now();
     var array = try allocator.alloc(i32, arraySize);
-    var end = try std.time.Instant.now();
-    var duration = end.since(start);
+    var duration = timer.read();
 
     var buff: [100]u8 = undefined;
 
@@ -106,10 +107,9 @@ pub fn parseTestFile(testfilePath: []const u8, datafilePath: []const u8, arraySi
     defer ll.destroy(allocator);
 
     var idx: usize = 0;
-    while (reader.readUntilDelimiter(&buffer, ' ')) |numStr| {
+    while (reader.readUntilDelimiter(&buffer, ' ')) |numStr| : (idx += 1) {
         const num = try std.fmt.parseInt(i32, numStr, 10);
         array[idx] = num;
-        idx += 1;
     } else |err| {
         if (err != error.EndOfStream) {
             return err;

@@ -1,23 +1,24 @@
 TestName,Language,Size,Duration
-Dynamic Array creation,C++,100000,4584
-LinkedList creation,C++,100000,1984568
-LinkedList traversal,C++,100000,212858
-Static Memory test,C++,100000,24
-Dynamic Array creation,Zig_c_allocator,100000,9689
-LinkedList creation,Zig_c_allocator,100000,3158191
-LinkedList traversal,Zig_c_allocator,100000,298525
-Static Memory test,Zig,100000,35
-Dynamic Array creation,Zig_general_purpose_allocator,100000,5117
-LinkedList creation,Zig_general_purpose_allocator,100000,3833753
-LinkedList traversal,Zig_general_purpose_allocator,100000,124131
+Dynamic Array creation,C++,100000,3138
+LinkedList creation,C++,100000,2033074
+LinkedList traversal,C++,100000,208359
+Static Memory test,C++,100000,25
+Dynamic Array creation,Zig_c_allocator,100000,7857
+LinkedList creation,Zig_c_allocator,100000,2366731
+LinkedList traversal,Zig_c_allocator,100000,215774
 Static Memory test,Zig,100000,25
-Dynamic Array creation,Zig_page_allocator,100000,2281
-LinkedList creation,Zig_page_allocator,100000,175269511
-LinkedList traversal,Zig_page_allocator,100000,7820863
-Static Memory test,Zig,100000,46
-Dynamic Array creation,Rust,100000,382201
-LinkedList creation,Rust,100000,2172135
-LinkedList traversal,Rust,100000,187281
-Static Memory test,Rust,100000,33
-ThreadCreation,C++,100000,15406
-ThreadCreation,Zig,100000,15038
+Dynamic Array creation,Zig_general_purpose_allocator,100000,6528
+LinkedList creation,Zig_general_purpose_allocator,100000,3673556
+LinkedList traversal,Zig_general_purpose_allocator,100000,117963
+Static Memory test,Zig,100000,27
+Dynamic Array creation,Zig_page_allocator,100000,3034
+LinkedList creation,Zig_page_allocator,100000,158730456
+LinkedList traversal,Zig_page_allocator,100000,6625044
+Static Memory test,Zig,100000,26
+Dynamic Array creation,Rust,100000,4302
+LinkedList creation,Rust,100000,2105668
+LinkedList traversal,Rust,100000,302268
+Static Memory test,Rust,100000,39
+ThreadCreation,C++,100000,14623
+ThreadCreation,Zig,100000,13944
+ThreadCreation,Rust,100000,23247

@@ -33,11 +33,11 @@ def build_apps(config):
                 '-O', 'ReleaseFast'
             ], capture_output=capture_output, cwd=f'./zig/{dir}/')
 
-        subprocess.run([
-            'cargo', 
-            'build',
-            '--release'
-        ], capture_output=capture_output, cwd='rust/memory/dynamic')
+            subprocess.run([
+                'cargo', 
+                'build',
+                '--release'
+            ], capture_output=capture_output, cwd=f'rust/{dir}/')
 
 def memory_tests(config):
     min = config['min']
@@ -73,27 +73,32 @@ def memory_tests(config):
         ], capture_output=capture_output)
 
     subprocess.run([
-        './rust/memory/dynamic/target/release/dynamic',
+        './rust/memory/target/release/main',
         testcase_dest,
         'data.csv',
         str(length)
     ], capture_output=capture_output)
-        
 
 def threading_tests(config):
-
     runs = str(config["thread_launches"])
+    capture_output = not config['show_outputs']
     subprocess.run([
         './c++/threading/main',
         runs,
         'data.csv',
-    ], capture_output=True)
+    ], capture_output=capture_output)
 
     subprocess.run([
         './zig/threading/main',
         runs,
         'data.csv',
-    ], capture_output=True)
+    ], capture_output=capture_output)
+
+    subprocess.run([
+        './rust/threading/target/release/main',
+        runs,
+        'data.csv',
+    ], capture_output=capture_output)
 
 def parse_data(config):
     df = pd.read_csv("data.csv")

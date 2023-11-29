@@ -11,13 +11,12 @@
         "pipe_reads" : 100000,
         "show_outputs" : false
     },
-
     "benchmark" :{
-        "clean" : true,
+        "clean" : true,         
         "show_outputs" : false
     },
     "compilation" : {
-        "compile" : true,
+        "compile" : false,
         "show_outputs" : false
     },
     "charts" : {
