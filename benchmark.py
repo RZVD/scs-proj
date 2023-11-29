@@ -1,15 +1,64 @@
 #!/bin/python3
 
+import tkinter as tk
+from tkinter import filedialog
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import random
 from matplotlib import subprocess
-
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-import csv
 import json
 import time
+import yaml
+
+
+class App:
+    def __init__(self, root, config):
+        self.root = root
+        self.root.title("Test Configuration")
+
+        self.config = config
+
+        self.create_widgets()
+
+    def create_widgets(self):
+        tk.Button(self.root, text="Select Config File", command=self.load_config).pack(pady=10)
+        tk.Button(self.root, text="Run Tests", command=self.run_tests).pack(pady=10)
+
+        for section, options in self.config.items():
+            tk.Label(self.root, text=f"{section.capitalize()} Configuration").pack(pady=5, anchor="w")
+            for option, default_value in options.items():
+                frame = tk.Frame(self.root)
+                frame.pack(pady=2, padx=10, anchor="w")
+                tk.Label(frame, text=f"{option.capitalize()}:", width=15, anchor="w").pack(side="left")
+                if isinstance(default_value, bool):
+                    var = tk.BooleanVar()
+                    var.set(default_value)
+                    tk.Checkbutton(frame, variable=var).pack(side="left")
+                    self.config[section][option] = var
+                elif isinstance(default_value, list):
+                    var = tk.StringVar()
+                    var.set(str(default_value))
+                    tk.Entry(frame, textvariable=var).pack(side="left")
+                    self.config[section][option] = var
+                else:
+                    var = tk.IntVar() if isinstance(default_value, int) else tk.StringVar()
+                    var.set(default_value)
+                    tk.Entry(frame, textvariable=var).pack(side="left")
+                    self.config[section][option] = var
+
+    def load_config(self):
+        file_path = filedialog.askopenfilename(defaultextension=".json", filetypes=[("JSON Files", "*.json")])
+        if file_path:
+            with open(file_path, 'r') as config_file:
+                self.config = json.load(config_file)
+            print(f"Config loaded from {file_path}")
+
+    def run_tests(self):
+        # Execute the tests with the loaded or default config
+        main(self.config)
+
 
 
 def clean_data():
@@ -133,6 +182,8 @@ def main(config):
     parse_data(config['charts'])
 
 if __name__ == '__main__':
-    with open('config.json', 'r') as config_file:
-        config = json.load(config_file)
-    main(config)
+    root = tk.Tk()
+    with open('config.yaml', 'r') as config_file:
+        config = yaml.safe_load(config_file)
+    app = App(root, config)
+    root.mainloop()

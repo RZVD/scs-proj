@@ -1,0 +1,8 @@
+Data visualisation working
+Memory tests done
+Thread creation done
+
+
+TODO:
+    Thread context switch measurement
+    Thread migration measurement
