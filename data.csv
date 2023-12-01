@@ -1,24 +1,24 @@
 TestName,Language,Size,Duration
-Dynamic Array creation,C++,100000,3548
-LinkedList creation,C++,100000,2339592
-LinkedList traversal,C++,100000,262132
-Static Memory test,C++,100000,26
-Dynamic Array creation,Zig_c_allocator,100000,9061
-LinkedList creation,Zig_c_allocator,100000,2789967
-LinkedList traversal,Zig_c_allocator,100000,283189
-Static Memory test,Zig,100000,29
-Dynamic Array creation,Zig_general_purpose_allocator,100000,4968
-LinkedList creation,Zig_general_purpose_allocator,100000,3991566
-LinkedList traversal,Zig_general_purpose_allocator,100000,172573
-Static Memory test,Zig,100000,40
-Dynamic Array creation,Zig_page_allocator,100000,2592
-LinkedList creation,Zig_page_allocator,100000,169145474
-LinkedList traversal,Zig_page_allocator,100000,7447658
-Static Memory test,Zig,100000,60
-Dynamic Array creation,Rust,100000,3884
-LinkedList creation,Rust,100000,2367027
-LinkedList traversal,Rust,100000,216086
-Static Memory test,Rust,100000,32
-ThreadCreation,C++,100000,16041
-ThreadCreation,Zig,100000,14539
-ThreadCreation,Rust,100000,24759
+Dynamic Array creation,C++,100000,4680
+LinkedList creation,C++,100000,1916516
+LinkedList traversal,C++,100000,225414
+Static Memory test,C++,100000,25
+Dynamic Array creation,Zig_c_allocator,100000,7864
+LinkedList creation,Zig_c_allocator,100000,2442845
+LinkedList traversal,Zig_c_allocator,100000,222293
+Static Memory test,Zig,100000,34
+Dynamic Array creation,Zig_general_purpose_allocator,100000,5780
+LinkedList creation,Zig_general_purpose_allocator,100000,3996588
+LinkedList traversal,Zig_general_purpose_allocator,100000,134301
+Static Memory test,Zig,100000,26
+Dynamic Array creation,Zig_page_allocator,100000,2544
+LinkedList creation,Zig_page_allocator,100000,175004528
+LinkedList traversal,Zig_page_allocator,100000,7504543
+Static Memory test,Zig,100000,33
+Dynamic Array creation,Rust,100000,5031
+LinkedList creation,Rust,100000,2148680
+LinkedList traversal,Rust,100000,202551
+Static Memory test,Rust,100000,38
+ThreadCreation,C++,100000,17350
+ThreadCreation,Zig,100000,16294
+ThreadCreation,Rust,100000,27013
