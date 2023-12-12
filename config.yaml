@@ -7,7 +7,8 @@ memory:
 
 threading:
   thread_launches: 100000
-  pipe_reads: 100000
+  pipe_reads: 100
+  migration_runs: 100000
   show_outputs: false
 
 benchmark:

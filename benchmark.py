@@ -23,6 +23,7 @@ class AppGUI:
         'threading': {
             'thread_launches': 100000,
             'pipe_reads': 100000,
+            'migration_runs': 100000,
             'show_outputs': False
         },
         'benchmark': {
@@ -73,10 +74,11 @@ class AppGUI:
                 self.entry_widgets[(key, option)] = entry_var
 
     def __load_config(self):
-        file_path = filedialog.askopenfilename(filetypes=[("All files", "*.*"), ("JSON Files", "*.json"), ("YAML Files", "*.yaml")])
+        file_path = filedialog.askopenfilename(filetypes=[("All files", "*"), ("JSON Files", "*.json"), ("YAML Files", "*.yaml")])
         if file_path:
             with open(file_path, 'r') as config_file:
-                self.__config = yaml.safe_load(config_file)
+                self.__config.update(yaml.safe_load(config_file))
+
             print(f"Config loaded from {file_path}")
             self.__update_gui_from_config()
 
@@ -123,7 +125,7 @@ def build_apps(config):
 
             subprocess.run([
                 'zig', 'build-exe', '-lc', 
-                './main.zig',
+                './main.zig', '/lib/x86_64-linux-gnu/libpthread.so.0', # Zig compiler bug
                 '-O', 'ReleaseFast'
             ], capture_output=capture_output, cwd=f'./zig/{dir}/')
 
@@ -174,23 +176,33 @@ def memory_tests(config):
     ], capture_output=capture_output)
 
 def threading_tests(config):
-    runs = str(config["thread_launches"])
+    creation_runs  = str(config["thread_launches"])
+    pipe_reads     = str(config['pipe_reads'])
+    migration_runs = str(config['migration_runs'])
+
+
     capture_output = not config['show_outputs']
     subprocess.run([
         './c++/threading/main',
-        runs,
+        creation_runs,
+        pipe_reads,
+        migration_runs,
         'data.csv',
     ], capture_output=capture_output)
 
     subprocess.run([
         './zig/threading/main',
-        runs,
+        creation_runs,
+        pipe_reads,
+        migration_runs,
         'data.csv',
     ], capture_output=capture_output)
 
     subprocess.run([
         './rust/threading/target/release/main',
-        runs,
+        creation_runs,
+        pipe_reads,
+        migration_runs,
         'data.csv',
     ], capture_output=capture_output)
 
@@ -202,7 +214,6 @@ def parse_data(config):
     if config['save']:
         os.makedirs(f'charts/{timestamp}/')
 
-    print('parse_data')
     for test_name, group in grouped:
         plt.figure(figsize=config['figsize'])
         plt.bar(group['Language'], group['Duration'])
@@ -239,7 +250,7 @@ def main(args):
 
         override_options = {
             'memory': ['array_size', 'min', 'max', 'testcase_dest', 'show_outputs'],
-            'threading': ['thread_launches', 'pipe_reads', 'show_outputs'],
+            'threading': ['thread_launches', 'pipe_reads', 'migration_runs', 'show_outputs'],
             'benchmark': ['clean', 'show_outputs'],
             'compilation': ['compile' ,'show_outputs'],
             'charts': ['save', 'show', 'figsize']
@@ -274,6 +285,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--threading-thread-launches', type=int, help='Number of thread launches for threading tests')
     parser.add_argument('--threading-pipe-reads', type=int, help='Number of pipe reads for threading tests')
+    parser.add_argument('--threading-migration-runs', type=int, help='Number of pipe reads for threading tests')
     parser.add_argument('--threading-show-outputs', type=bool, help='Show outputs for threading tests')
 
     parser.add_argument('--benchmark-clean', type=bool, help='Cleans data.csv')

@@ -1,7 +1,6 @@
 #include <array>
 #include <bits/chrono.h>
 #include <chrono>
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 
