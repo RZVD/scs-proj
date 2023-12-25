@@ -50,7 +50,7 @@ template <typename T> class LinkedList {
         this->tail = newNode;
     }
 
-    template <typename U> LinkedList<U> map(U (*transform)(T)) {
+    template <typename U> auto map(U (*transform)(T)) -> LinkedList<U> {
         Node<T>* current = this->head;
         LinkedList<U> newList = LinkedList<U>();
 
@@ -78,12 +78,12 @@ template <typename T> class LinkedList {
     }
 
     void traverse() {
-        volatile Node<T>* current = head; // Necesarry to prevent loop unrolling when comipling with -O3 flags
+        volatile Node<T>* current = head; // Necesary to prevent loop unrolling
+                                          // when comipling with -O3 flags
 
         while (current) {
             current = current->next;
         }
-
     }
 
     ~LinkedList() {
@@ -98,65 +98,61 @@ template <typename T> class LinkedList {
     }
 };
 
-void parse_testfile(char* testfile_path, char* datafile_path, int array_size) {
-    std::ifstream testfile(testfile_path);
-    std::ofstream datafile(datafile_path, std::ios::app);
+void dynamic_memory_tests(std::ifstream& in, std::ofstream& out, int array_size) {
 
     auto start = std::chrono::high_resolution_clock::now();
     int* array = (int*)malloc(sizeof(int) * array_size);
     auto end = std::chrono::high_resolution_clock::now();
 
-    auto duration =
-        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
-    datafile << "Dynamic Array creation,C++," << array_size << ","
-             << duration.count() << '\n';
+    out << "Dynamic Array creation,C++," << array_size << "," << duration.count() << '\n';
+
     std::cout << "Array alloc: " << duration.count() << '\n';
 
     int idx = 0;
     int el = -1;
-    while (testfile >> el) {
+
+    while (in >> el) {
         array[idx++] = el;
     }
-    testfile.close();
 
     start = std::chrono::high_resolution_clock::now();
     auto ll = new LinkedList<int>();
+
     for (int i = 0; i < array_size; i++) {
         ll->push_back(array[i]);
     }
     end = std::chrono::high_resolution_clock::now();
-    duration =
-        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+
     std::cout << "Time to create linked list: " << duration.count() << '\n';
 
-    datafile << "LinkedList creation,C++," << array_size << ","
-             << duration.count() << '\n';
+    out << "LinkedList creation,C++," << array_size << "," << duration.count() << '\n';
 
     start = std::chrono::high_resolution_clock::now();
     ll->traverse();
     end = std::chrono::high_resolution_clock::now();
 
-    duration =
-        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
-    datafile << "LinkedList traversal,C++," << array_size << ","
-             << duration.count() << '\n';
+    out << "LinkedList traversal,C++," << array_size << "," << duration.count() << '\n';
+}
 
+void static_memory_tests(std::ofstream& out) {
 
     int static_arr[100000] = {0};
 
-    start = std::chrono::high_resolution_clock::now();
-    for(int i = 0; i < 100000;i++) {
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 100000; i++) {
         static_arr[i] = i + 1;
     }
-    end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
 
-    duration =
+    auto duration =
         std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
-    datafile << "Static Memory test,C++," << 100000 << "," << duration.count() << '\n';
-    datafile.close();
+    out << "Static Memory test,C++," << 100000 << "," << duration.count() << '\n';
 }
 
 int main(int argc, char** argv) {
@@ -169,8 +165,11 @@ int main(int argc, char** argv) {
         exit(-1);
     }
 
+    std::ifstream testfile(argv[1]);
+    std::ofstream datafile(argv[2], std::ios::app);
     int array_size = atoi(argv[3]);
-    parse_testfile(argv[1], argv[2], array_size);
 
+    dynamic_memory_tests(testfile, datafile, array_size);
+    static_memory_tests(datafile);
     return 0;
 }

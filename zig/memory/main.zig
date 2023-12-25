@@ -82,6 +82,54 @@ pub fn LinkedList(comptime T: type) type {
     };
 }
 
+fn dynamic_memory_tests(in: *std.fs.File, out: *std.fs.File, arraySize: usize, allocator: std.mem.Allocator, alloc_type: []const u8) !void {
+    var reader = in.reader();
+    var timer = try std.time.Timer.start();
+    var array = try allocator.alloc(i32, arraySize);
+    var duration = timer.read();
+
+    var buff: [100]u8 = undefined;
+
+    _ = try out.write(try std.fmt.bufPrint(&buff, "Dynamic Array creation,Zig_{s},{},{}\n", .{ alloc_type, arraySize, duration }));
+
+    var buffer: [32]u8 = undefined;
+    var ll = LinkedList(i32){};
+    defer ll.destroy(allocator);
+
+    var idx: usize = 0;
+    while (reader.readUntilDelimiter(&buffer, ' ')) |numStr| : (idx += 1) {
+        const num = try std.fmt.parseInt(i32, numStr, 10);
+        array[idx] = num;
+    } else |err| {
+        if (err != error.EndOfStream) {
+            return err;
+        }
+    }
+    timer.reset();
+
+    for (array) |element| {
+        try ll.push_back(element, allocator);
+    }
+
+    _ = try out.write(try std.fmt.bufPrint(&buff, "LinkedList creation,Zig_{s},{},{}\n", .{ alloc_type, arraySize, timer.read() }));
+
+    timer.reset();
+    ll.traverse();
+    _ = try out.write(try std.fmt.bufPrint(&buff, "LinkedList traversal,Zig_{s},{},{}\n", .{ alloc_type, arraySize, timer.read() }));
+}
+
+fn static_memory_tests(out: *std.fs.File) !void {
+    var static_arr: [100000]i32 = undefined;
+    var timer = try std.time.Timer.start();
+    var buff: [100]u8 = undefined;
+
+    for (0..100000) |i| {
+        static_arr[i] = @intCast(i + 1);
+    }
+
+    _ = try out.write(try std.fmt.bufPrint(&buff, "Static Memory test,Zig,100000,{}\n", .{timer.read()}));
+}
+
 pub fn parseTestFile(testfilePath: []const u8, datafilePath: []const u8, arraySize: usize, allocator: std.mem.Allocator, alloc_type: []const u8) !void {
     var testfile = try std.fs.cwd().openFile(testfilePath, .{});
     defer testfile.close();
@@ -144,26 +192,35 @@ pub fn main() !void {
         std.debug.print("Usage: (1) testcase file location\n", .{});
         std.debug.print("Usage: (2) results file location\n", .{});
         std.debug.print("Usage: (3) array_size\n", .{});
-        std.debug.print("Usage: (4) allocator_type\n\tSupported: c_allocator (c), page_allocator(pa), general_purpose_allocator(gpa)\n", .{});
+        std.debug.print("Usage: (4) allocator_type\n\tSupported: c_allocator (ca), page_allocator(pa), general_purpose_allocator(gpa)\n", .{});
         std.process.exit(1);
     }
-
     const testcase = std.mem.span(args[1]);
     const results = std.mem.span(args[2]);
     const size = std.mem.span(args[3]);
     const allocator_type = std.mem.span(args[4]);
     const arraySize = try std.fmt.parseInt(usize, size, 10);
 
-    if (std.mem.eql(u8, allocator_type, "c_allocator") or std.mem.eql(u8, allocator_type, "ca")) {
-        try parseTestFile(testcase, results, arraySize, std.heap.c_allocator, allocator_type);
-    }
+    var testfile = try std.fs.cwd().openFile(testcase, .{});
+    defer testfile.close();
 
-    if (std.mem.eql(u8, allocator_type, "page_allocator") or std.mem.eql(u8, allocator_type, "pa")) {
-        try parseTestFile(testcase, results, arraySize, std.heap.page_allocator, allocator_type);
-    }
+    var results_file = try std.fs.cwd().openFile(results, .{ .mode = .read_write });
+    var stat = try results_file.stat();
+    try results_file.seekTo(stat.size);
+    defer results_file.close();
 
-    if (std.mem.eql(u8, allocator_type, "general_purpose_allocator") or std.mem.eql(u8, allocator_type, "gpa")) {
-        var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-        try parseTestFile(testcase, results, arraySize, gpa.allocator(), allocator_type);
-    }
+    const Allocators = enum { c_allocator, ca, page_allocator, pa, general_purpose_allocator, gpa };
+    const alloc = std.meta.stringToEnum(Allocators, allocator_type).?;
+
+    var allocator: std.mem.Allocator = switch (alloc) {
+        .general_purpose_allocator, .gpa => general_purpose_allocator: {
+            var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+            break :general_purpose_allocator gpa.allocator();
+        },
+        .c_allocator, .ca => std.heap.c_allocator,
+        .page_allocator, .pa => std.heap.page_allocator,
+    };
+
+    try dynamic_memory_tests(&testfile, &results_file, arraySize, allocator, allocator_type);
+    try static_memory_tests(&results_file);
 }

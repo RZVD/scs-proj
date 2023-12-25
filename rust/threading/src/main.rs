@@ -1,11 +1,11 @@
 use std::fs::{File, OpenOptions};
-use std::io::{self, Read, Write};
+use std::io::{self, Write};
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
-use libc::{uinput_ff_erase, CPU_SET, CPU_ZERO};
+use libc::{CPU_SET, CPU_ZERO};
 
-mod p {
+mod pthread {
     pub use libc::{c_int, cpu_set_t, pthread_self, pthread_setaffinity_np};
 }
 
@@ -13,7 +13,7 @@ extern "C" {
     fn sched_yield() -> libc::c_int;
 }
 
-pub fn cpu_clear_and_set(cpu: usize, cpuset: &mut p::cpu_set_t) {
+pub fn cpu_clear_and_set(cpu: usize, cpuset: &mut pthread::cpu_set_t) {
     unsafe {
         CPU_ZERO(cpuset);
         CPU_SET(cpu, cpuset)
@@ -24,7 +24,7 @@ fn run_function() {
     return;
 }
 
-fn test_thread_creation(runs: usize, file: &mut File) -> io::Result<()> {
+pub fn test_thread_creation(runs: usize, file: &mut File) -> io::Result<()> {
     let timer = Instant::now();
     for _ in 0..runs {
         let thread = thread::spawn(|| run_function());
@@ -46,6 +46,38 @@ fn test_thread_creation(runs: usize, file: &mut File) -> io::Result<()> {
         runs,
         duration_difference.as_nanos() / runs as u128
     )?;
+
+    Ok(())
+}
+
+pub async fn test_tokio_thread_creation(runs: usize, file: &mut File) -> io::Result<()> {
+    let timer = Instant::now();
+
+    for _ in 0..runs {
+        let _ = tokio::task::spawn(async {
+            return;
+        })
+        .await;
+    }
+
+    let thread_time = timer.elapsed();
+
+    let timer = Instant::now();
+    for _ in 0..runs {
+        run_function();
+    }
+    // asdf
+    let direct_time = timer.elapsed();
+
+    let duration_difference = thread_time - direct_time;
+
+    writeln!(
+        file,
+        "ThreadCreation,RustTokio,{},{}",
+        runs,
+        duration_difference.as_nanos() / runs as u128
+    )?;
+
     Ok(())
 }
 
@@ -65,7 +97,7 @@ fn ctx_switch_fn(
     Ok(())
 }
 
-fn test_thread_context_switch(runs: usize, file: &mut File) -> io::Result<()> {
+pub fn test_thread_context_switch(runs: usize, file: &mut File) -> io::Result<()> {
     let (parent_to_child, child_to_parent) = unsafe {
         let mut fd1 = [0; 2];
         let mut fd2 = [0; 2];
@@ -123,7 +155,6 @@ fn migrating_thread() -> u64 {
     }
     let start_time = Instant::now();
 
-
     unsafe {
         sched_yield();
     }
@@ -133,7 +164,7 @@ fn migrating_thread() -> u64 {
     (end_time - start_time).as_nanos() as u64
 }
 
-fn test_thread_migrations(runs: usize, file: &mut File) -> io::Result<()> {
+pub fn test_thread_migrations(runs: usize, file: &mut File) -> io::Result<()> {
     let mut duration: u64 = 0;
 
     for _ in 0..runs {
@@ -147,7 +178,8 @@ fn test_thread_migrations(runs: usize, file: &mut File) -> io::Result<()> {
     Ok(())
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+pub async fn main() -> io::Result<()> {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 5 {
         eprintln!("Wrong args");
@@ -175,6 +207,7 @@ fn main() -> io::Result<()> {
         .open(datafile_location)?;
 
     test_thread_creation(creation_runs, &mut file)?;
+    test_tokio_thread_creation(creation_runs, &mut file).await?;
     test_thread_context_switch(pipe_runs, &mut file)?;
     test_thread_migrations(thread_migrations, &mut file)?;
 

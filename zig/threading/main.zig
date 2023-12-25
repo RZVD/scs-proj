@@ -34,8 +34,7 @@ fn testThreadCreation(runs: usize, file: *std.fs.File) !void {
 }
 
 fn ctxSwitchFn(runs: usize, parentToChild: [2]std.os.fd_t, childToParent: [2]std.os.fd_t) !void { // Zig doesn't support lambdas yet
-    for (0..runs) |i| {
-        _ = i;
+    for (0..runs) |_| {
         var buf: [2]u8 = undefined;
         _ = try std.os.read(parentToChild[0], buf[0..]);
         var response = [_]u8{'A'};
@@ -82,8 +81,7 @@ fn migratingThread(duration: *u64) !void {
 pub fn testThreadMigrations(runs: usize, datafile: *std.fs.File) !void {
     var duration: u64 = 0;
 
-    for (0..runs) |i| {
-        _ = i;
+    for (0..runs) |_| {
         const child = try std.Thread.spawn(.{}, migratingThread, .{&duration});
         child.join();
     }

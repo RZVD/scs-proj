@@ -1,7 +1,5 @@
-use std::io::{self, Read};
-use std::alloc::{alloc, Layout};
 use std::fs::{File, OpenOptions};
-
+use std::io::{self};
 
 use std::io::Write;
 use std::mem;
@@ -95,34 +93,20 @@ impl<T: std::fmt::Display> std::fmt::Display for List<T> {
     }
 }
 
-fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -> io::Result<()> {
+fn dynamic_memory_tests(testfile_path: &str, out: &mut File, array_size: usize) -> io::Result<()> {
     let start = Instant::now();
-    let mut array: Vec<i32> = Vec::with_capacity(array_size);
+    let mut _array: Vec<i32> = Vec::with_capacity(array_size);
     let duration = start.elapsed();
-    let mut testfile = File::open(testfile_path)?;
-    let mut file_string = String::new();
-    testfile.read_to_string(&mut file_string)?;
 
-    for s in file_string.split_whitespace() {
-        if let Ok(num) = s.parse::<i32>() {
-            array.push(num);
-        }
-    }
-
-    let array: Vec<i32> = file_string
+    let array: Vec<i32> = std::fs::read_to_string(&testfile_path)?
         .split_whitespace()
         .map(|s| s.parse().unwrap())
         .collect::<Vec<_>>();
 
     println!("{}", duration.as_nanos());
 
-    let mut datafile = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open(datafile_path)?;
-
     writeln!(
-        datafile,
+        out,
         "Dynamic Array creation,Rust,{},{}",
         array_size,
         duration.as_nanos()
@@ -137,7 +121,7 @@ fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -
     println!("Time to create linked list: {:?}", duration);
 
     writeln!(
-        datafile,
+        out,
         "LinkedList creation,Rust,{},{}",
         array_size,
         duration.as_nanos()
@@ -147,12 +131,16 @@ fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -
     ll.traverse();
     let duration = start.elapsed();
     writeln!(
-        datafile,
+        out,
         "LinkedList traversal,Rust,{},{}",
         array_size,
         duration.as_nanos()
     )?;
 
+    Ok(())
+}
+
+fn static_memory_tests(out: &mut File) -> io::Result<()> {
     let mut static_array: [i32; 100000] = [0; 100000];
     let start = Instant::now();
     for (idx, el) in static_array.iter_mut().enumerate() {
@@ -161,7 +149,7 @@ fn parse_testfile(testfile_path: &str, datafile_path: &str, array_size: usize) -
     let duration = start.elapsed();
 
     writeln!(
-        datafile,
+        out,
         "Static Memory test,Rust,{},{}",
         100000,
         duration.as_nanos()
@@ -182,7 +170,13 @@ fn main() -> io::Result<()> {
 
     let array_size: usize = args[3].parse().expect("Invalid array size");
 
-    parse_testfile(&args[1], &args[2], array_size)?;
+    let mut out = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open(&args[2])?;
+
+    dynamic_memory_tests(&args[1], &mut out, array_size)?;
+    static_memory_tests(&mut out)?;
 
     Ok(())
 }
