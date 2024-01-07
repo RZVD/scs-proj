@@ -77,7 +77,7 @@ class AppGUI:
         file_path = filedialog.askopenfilename(filetypes=[("All files", "*"), ("JSON Files", "*.json"), ("YAML Files", "*.yaml")])
         if file_path:
             with open(file_path, 'r') as config_file:
-                self.__config.update(yaml.safe_load(config_file))
+                self.__config.update |= yaml.safe_load(config_file)
 
             print(f"Config loaded from {file_path}")
             self.__update_gui_from_config()
@@ -159,7 +159,8 @@ def memory_tests(config):
         str(length)
     ], capture_output=capture_output)
 
-    for allocator in ['c_allocator', 'general_purpose_allocator', 'page_allocator']:
+    allocators = ['c_allocator', 'general_purpose_allocator', 'page_allocator', 'arena_allocator']
+    for allocator in allocators:
         subprocess.run([
             './zig/memory/main',
             testcase_dest,
@@ -179,7 +180,6 @@ def threading_tests(config):
     creation_runs  = str(config["thread_launches"])
     pipe_reads     = str(config['pipe_reads'])
     migration_runs = str(config['migration_runs'])
-
 
     capture_output = not config['show_outputs']
     subprocess.run([

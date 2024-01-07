@@ -1,31 +1,35 @@
 TestName,Language,Size,Duration
-Dynamic Array creation,C++,100000,12676
-LinkedList creation,C++,100000,5929824
-LinkedList traversal,C++,100000,543001
-Static Memory test,C++,100000,79
-Dynamic Array creation,Zig_c_allocator,100000,28201
-LinkedList creation,Zig_c_allocator,100000,2175674
-LinkedList traversal,Zig_c_allocator,100000,214613
-Static Memory test,Zig,100000,38
-Dynamic Array creation,Zig_general_purpose_allocator,100000,4832
-LinkedList creation,Zig_general_purpose_allocator,100000,3681066
-LinkedList traversal,Zig_general_purpose_allocator,100000,153867
-Static Memory test,Zig,100000,33
-Dynamic Array creation,Zig_page_allocator,100000,3417
-LinkedList creation,Zig_page_allocator,100000,170759701
-LinkedList traversal,Zig_page_allocator,100000,7171980
-Static Memory test,Zig,100000,24
-Dynamic Array creation,Rust,100000,4650
-LinkedList creation,Rust,100000,2105926
-LinkedList traversal,Rust,100000,270152
-Static Memory test,Rust,100000,31
-ThreadCreation,C++,100000,14616
-ThreadContextSwitches,C++,100,218490
-ThreadMigration,C++,100000,35664738
-ThreadCreation,Zig,100000,14093
-ThreadContextSwitches,Zig,100,215707
-ThreadMigration,Zig,100000,35118896
-ThreadCreation,Rust,100000,22941
-ThreadCreation,RustTokio,100000,5813
-ThreadContextSwitches,Rust,100,227701
-ThreadMigration,Rust,100000,38365630
+Dynamic Array creation,C++,100000,8646
+LinkedList creation,C++,100000,3731974
+LinkedList traversal,C++,100000,361005
+Static Memory test,C++,100000,44
+Dynamic Array creation,Zig_c_allocator,100000,17953
+LinkedList creation,Zig_c_allocator,100000,4616433
+LinkedList traversal,Zig_c_allocator,100000,392867
+Static Memory test,Zig,100000,42
+Dynamic Array creation,Zig_general_purpose_allocator,100000,12374
+LinkedList creation,Zig_general_purpose_allocator,100000,8122768
+LinkedList traversal,Zig_general_purpose_allocator,100000,283462
+Static Memory test,Zig,100000,90
+Dynamic Array creation,Zig_page_allocator,100000,4922
+LinkedList creation,Zig_page_allocator,100000,305575093
+LinkedList traversal,Zig_page_allocator,100000,9340590
+Static Memory test,Zig,100000,111
+Dynamic Array creation,Zig_arena_allocator,100000,8977
+LinkedList creation,Zig_arena_allocator,100000,1322056
+LinkedList traversal,Zig_arena_allocator,100000,206653
+Static Memory test,Zig,100000,46
+Dynamic Array creation,Rust,100000,8438
+LinkedList creation,Rust,100000,3709236
+LinkedList traversal,Rust,100000,321423
+Static Memory test,Rust,100000,54
+ThreadCreation,C++,100000,29898
+ThreadContextSwitches,C++,100,403270
+ThreadMigration,C++,100000,86446247
+ThreadCreation,Zig,100000,27194
+ThreadContextSwitches,Zig,100,442032
+ThreadMigration,Zig,100000,94672418
+ThreadCreation,Rust,100000,45968
+ThreadCreation,RustTokio,100000,13468
+ThreadContextSwitches,Rust,100,433820
+ThreadMigration,Rust,100000,92713919
