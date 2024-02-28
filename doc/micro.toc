@@ -15,5 +15,9 @@
 \contentsline {subsection}{\numberline {4.3}Threading tests, thread creation}{7}{}%
 \contentsline {subsection}{\numberline {4.4}Threading tests, thread context switch}{7}{}%
 \contentsline {subsection}{\numberline {4.5}Threading tests, thread migration}{7}{}%
-\contentsline {subsection}{\numberline {4.6}Benchmarking script}{7}{}%
-\contentsline {section}{\numberline {5}Bibliography}{8}{}%
+\contentsline {subsection}{\numberline {4.6}Benchmarking script}{8}{}%
+\contentsline {section}{\numberline {5}Testing and validation}{9}{}%
+\contentsline {subsection}{\numberline {5.1}Interpretation of results}{9}{}%
+\contentsline {section}{\numberline {6}Conclusion}{11}{}%
+\contentsline {section}{\numberline {7}Possible Extensions}{11}{}%
+\contentsline {section}{\numberline {8}Bibliography}{12}{}%

@@ -1,10 +1,5 @@
 const std = @import("std");
-const Allocators = enum {
-    c_allocator, ca,
-    page_allocator, pa,
-    general_purpose_allocator, gpa,
-    arena_allocator, aa 
-};
+const Allocators = enum { c_allocator, ca, page_allocator, pa, general_purpose_allocator, gpa, arena_allocator, aa };
 
 pub fn LinkedList(comptime T: type) type {
     return struct {
@@ -157,7 +152,6 @@ pub fn main() !void {
     const size = std.mem.span(args[3]);
     const allocator_type = std.mem.span(args[4]);
     const arraySize = try std.fmt.parseInt(usize, size, 10);
-    _ = arraySize;
 
     var testfile = try std.fs.cwd().openFile(testcase, .{});
     defer testfile.close();
@@ -184,6 +178,6 @@ pub fn main() !void {
 
     std.debug.print("{}", .{@typeName(allocator)});
 
-    // try dynamic_memory_tests(&testfile, &results_file, arraySize, allocator, alloc);
-    // try static_memory_tests(&results_file);
+    try dynamic_memory_tests(&testfile, &results_file, arraySize, allocator, alloc);
+    try static_memory_tests(&results_file);
 }
